@@ -1,6 +1,5 @@
 
- * Build status: [![Build Status](https://travis-ci.org/sannies/mp4parser.svg?branch=master)](https://travis-ci.org/sannies/mp4parser)
- * Current central released version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.googlecode.mp4parser/isoparser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.googlecode.mp4parser/isoparser)
+ [![JitPack](https://jitpack.io/v/pgmacdesign/mp4parser.svg)](https://jitpack.io/#pgmacdesign/mp4parser)
 
 Java MP4 Parser
 ====================
