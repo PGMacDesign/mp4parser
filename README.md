@@ -7,21 +7,60 @@ Java MP4 Parser
 
 A Java API to read, write and create MP4 container. Manipulating containers is different from encoding and decoding videos and audio. 
 
+
 Using the library
 ------------------
 
-The library is published to Maven repositories. Each release is pushed to a staging repository which is published on the release page. On request specific releases can be pushed to maven central. 
+The library is published to Jitpack. To include it in your project use the following code:
+
+Gradle:
+
+Include this in your top-level gradle file
+```
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Include this in your module-level gradle file:
+```
+    implementation 'com.github.PGMacDesign.mp4parser:isoparser:1.1.25'
+```
+
+For other build instructions (IE Maven), See [this Jetpack link](https://jitpack.io/#PGMacDesign/mp4parser/1.1.25)
+
+
+Updated by PGMacDesign
+------------------
+
+This Library was updated in April of 2019 with the following goals:
+
+1) Fix Logging - There is a lot of erroneous logging occurring on the 1.x branch. I have added some core code to help resolve that issue.
+If you want to disable or enable logging for *debug*, just call the following:
 
 ```
-  <dependency>
-    <groupId>com.googlecode.mp4parser</groupId>
-    <artifactId>isoparser</artifactId>
-    <version>1.1.7</version>
-  </dependency>
+LoggingCore.setShouldLog(false)
+```
+Where false will disable logging and true will enable it. By default, this is set to true to mirror how the original creator wrote it.
+
+2) Optimization - There was a pull request located [here](https://github.com/sannies/mp4parser/pull/349) by Takke that indicated a significant improvement in conversion speed for larger videos.
+The code here updated that and included it.
+
+3) File Writing Callback - In its current iteration, the only way to keep track of the progress of file writing was to read the logs.
+This has been resolved by including a new callback interface that can be used. The interface has one callback method with 3 variables:
+
+```
+    public interface Mp4TrimmerTimeCallback {
+        void chunkWritten(long bytesWritten, long totalBytes, float percentage);
+    }
 ```
 
-For projects that do not use a dependency management tool each release's artifacts (jar, javadoc-jar, source-jar) are attached to the release page. Please be aware that the project requires the aspectj-rt.jar library. 
-
+In it, the first var is the number of bytes that have been written.
+The second is the total number of bytes that will be written.
+The third is a percentage calculation (float between 0 and 1) dividing the first into the second.
+Please note that if an issue happens in calculating the total size, 0 will be sent for the percentage.
 
 What can you do?
 --------------------

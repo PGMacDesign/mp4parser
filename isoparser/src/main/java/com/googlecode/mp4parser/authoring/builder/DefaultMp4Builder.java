@@ -15,6 +15,7 @@
  */
 package com.googlecode.mp4parser.authoring.builder;
 
+import com.LoggingCore;
 import com.coremedia.iso.BoxParser;
 import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.IsoTypeWriter;
@@ -50,13 +51,17 @@ import static com.googlecode.mp4parser.util.Math.lcm;
  */
 public class DefaultMp4Builder implements Mp4Builder {
 
+    public interface Mp4TrimmerTimeCallback {
+        void chunkWritten(long bytesWritten, long totalBytes, float percentage);
+    }
+    
     private static Logger LOG = Logger.getLogger(DefaultMp4Builder.class);
     Map<Track, StaticChunkOffsetBox> chunkOffsetBoxes = new HashMap<Track, StaticChunkOffsetBox>();
     Set<SampleAuxiliaryInformationOffsetsBox> sampleAuxiliaryInformationOffsetsBoxes = new HashSet<SampleAuxiliaryInformationOffsetsBox>();
     HashMap<Track, List<Sample>> track2Sample = new HashMap<Track, List<Sample>>();
     HashMap<Track, long[]> track2SampleSizes = new HashMap<Track, long[]>();
     private Fragmenter fragmenter;
-    private boolean enableLogs;
+    private Mp4TrimmerTimeCallback chunkWriterCallback;
 
     private static long sum(int[] ls) {
         long rc = 0;
@@ -86,18 +91,22 @@ public class DefaultMp4Builder implements Mp4Builder {
     }
     
     public Container build(Movie movie) {
-        return this.build(movie, false);
+        return this.build(movie, null);
     }
     
     /**
      * {@inheritDoc}
      */
-    public Container build(Movie movie, boolean enableLogs) {
-        this.enableLogs = enableLogs;
+    public Container build(Movie movie,
+                           DefaultMp4Builder.Mp4TrimmerTimeCallback chunkWriterCallback) {
+        LoggingCore.getInstance();
         if (fragmenter == null) {
             fragmenter = new BetterFragmenter(2);
         }
-        if(DefaultMp4Builder.this.enableLogs) {
+        if(chunkWriterCallback != null){
+            this.chunkWriterCallback = chunkWriterCallback;
+        }
+        if(LoggingCore.getShouldLog()) {
             LOG.logDebug("Creating movie " + movie);
         }
         for (Track track : movie.getTracks()) {
@@ -130,12 +139,12 @@ public class DefaultMp4Builder implements Mp4Builder {
             contentSize += sum(stsz.getSampleSizes());
 
         }
-        if(DefaultMp4Builder.this.enableLogs) {
+        if(LoggingCore.getShouldLog()) {
             LOG.logDebug("About to create mdat");
         }
         InterleaveChunkMdat mdat = new InterleaveChunkMdat(movie, chunks, contentSize);
         isoFile.addBox(mdat);
-        if(DefaultMp4Builder.this.enableLogs) {
+        if(LoggingCore.getShouldLog()) {
             LOG.logDebug("mdat crated");
         }
 
@@ -335,7 +344,7 @@ public class DefaultMp4Builder implements Mp4Builder {
         Box stbl = createStbl(track, movie, chunks);
         minf.addBox(stbl);
         mdia.addBox(minf);
-        if(DefaultMp4Builder.this.enableLogs) {
+        if(LoggingCore.getShouldLog()) {
             LOG.logDebug("done with trak for track_" + track.getTrackMetaData().getTrackId());
         }
         return trackBox;
@@ -418,7 +427,7 @@ public class DefaultMp4Builder implements Mp4Builder {
             createCencBoxes((CencEncryptedTrack) track, stbl, chunks.get(track));
         }
         createSubs(track, stbl);
-        if(DefaultMp4Builder.this.enableLogs) {
+        if(LoggingCore.getShouldLog()) {
             LOG.logDebug("done with stbl for track_" + track.getTrackMetaData().getTrackId());
         }
         return stbl;
@@ -487,7 +496,7 @@ public class DefaultMp4Builder implements Mp4Builder {
 
             long offset = 0;
             // all tracks have the same number of chunks
-            if(DefaultMp4Builder.this.enableLogs) {
+            if(LoggingCore.getShouldLog()) {
                 LOG.logDebug("Calculating chunk offsets for track_" + targetTrack.getTrackMetaData().getTrackId());
             }
             List<Track> tracks = new ArrayList<Track>(chunks.keySet());
@@ -781,7 +790,7 @@ public class DefaultMp4Builder implements Mp4Builder {
             long writtenBytes = 0;
             long writtenMegaBytes = 0;
     
-            if(DefaultMp4Builder.this.enableLogs) {
+            if(LoggingCore.getShouldLog()) {
                 LOG.logDebug("About to write " + contentSize);
             }
             for (List<Sample> samples : chunkList) {
@@ -791,8 +800,12 @@ public class DefaultMp4Builder implements Mp4Builder {
                     if (writtenBytes > 1024 * 1024) {
                         writtenBytes -= 1024 * 1024;
                         writtenMegaBytes++;
-                        if(DefaultMp4Builder.this.enableLogs) {
+                        if(LoggingCore.getShouldLog()) {
                             LOG.logDebug("Written " + writtenMegaBytes + "MB");
+                        }
+                        if(DefaultMp4Builder.this.chunkWriterCallback != null){
+                            float percentWritten = (contentSize <= 16) ? 0F : ((float)writtenBytes / (float)contentSize);
+                            chunkWriterCallback.chunkWritten(writtenBytes, contentSize, percentWritten);
                         }
                     }
                 }
