@@ -7,18 +7,18 @@ The master branch is not being maintained; only the 1.x branch is actively being
 
 To see said branch, click on the branch dropdown or just click [here](https://github.com/PGMacDesign/mp4parser/tree/1.x)
 
-
-
-
-
-
-
-
-
-
-
-
-
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
 
 
 Java MP4 Parser
