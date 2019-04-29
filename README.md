@@ -1,21 +1,30 @@
 
- * Build status: [![Build Status](https://travis-ci.org/sannies/mp4parser.svg?branch=master)](https://travis-ci.org/sannies/mp4parser)
- * Current central released version 1.x branch: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.googlecode.mp4parser/isoparser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.googlecode.mp4parser/isoparser)
- * Current central released version 2.x branch: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.mp4parser/isoparser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.googlecode.mp4parser/isoparser)
+
+PLEASE NOTE
+====================
+
+The master branch is not being maintained; only the 1.x branch is actively being developed upon.
+
+To see said branch, click on the branch dropdown or just click [here](https://github.com/PGMacDesign/mp4parser/tree/1.x)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 Java MP4 Parser
 ====================
 
 A Java API to read, write and create MP4 container. Manipulating containers is different from encoding and decoding videos and audio. 
-
-PLEASE NOTE
-------------------
-
-The master branch is not being maintained; only the 1.x branch is actively being developed upon.
-
-To see said branch, click on the branch dropdown or just click [here](https://github.com/PGMacDesign/mp4parser/tree/1.x)
-
 
 Using the library
 ------------------
