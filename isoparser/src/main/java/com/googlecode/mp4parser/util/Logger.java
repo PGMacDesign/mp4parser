@@ -1,5 +1,8 @@
 package com.googlecode.mp4parser.util;
 
+/**
+ * Logging Class. For link on logging preferences, see {@link com.LoggingCore}
+ */
 public abstract class Logger {
 
     public static Logger getLogger(Class clz) {
