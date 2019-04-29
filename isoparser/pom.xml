@@ -1,13 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.googlecode.mp4parser</groupId>
+
+    <groupId>com.github.PGMacDesign.mp4parser</groupId>
     <artifactId>isoparser</artifactId>
     <packaging>jar</packaging>
-    <name>ISO Parser</name>
+    <name>MP4 Parser Lib</name>
     <description>A generic parser and writer for all ISO 14496 based files (MP4, Quicktime, DCF, PDCF, ...)
     </description>
-    <url>http://code.google.com/p/mp4parser/</url>
-    <version>1.1.23-SNAPSHOT</version>
+    <!--<url>http://code.google.com/p/mp4parser/</url>-->
+    <version>1.1.24</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -91,7 +92,9 @@
         </plugins>
     </build>
 
+
     <dependencies>
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -123,35 +126,35 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>release-sign-artifacts</id>-->
+            <!--<activation>-->
+                <!--<property>-->
+                    <!--<name>performRelease</name>-->
+                    <!--<value>true</value>-->
+                <!--</property>-->
+            <!--</activation>-->
+            <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<groupId>org.apache.maven.plugins</groupId>-->
+                        <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<id>sign-artifacts</id>-->
+                                <!--<phase>verify</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>sign</goal>-->
+                                <!--</goals>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
 
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+                <!--</plugins>-->
+            <!--</build>-->
+        <!--</profile>-->
+    <!--</profiles>-->
 
     <ciManagement>
         <system>jenkins</system>
@@ -167,13 +170,13 @@
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/sannies/mp4parser/issues</url>
+        <url>https://github.com/PGMacDesign/mp4parser/issues</url>
     </issueManagement>
 
     <developers>
         <developer>
             <id>sannies</id>
-            <email>Sebastian.Annies@googlemail.com</email>
+            <email>pgmacdesign@gmail.com</email>
         </developer>
     </developers>
 
@@ -196,7 +199,7 @@
     </distributionManagement>
 
     <scm>
-        <url>https://github.com/sannies/mp4parser</url>
+        <url>https://github.com/PGMacDesign/mp4parser</url>
       <tag> mp4parser-project-1.0.7-SNAPSHOT-4</tag>
   </scm>
 

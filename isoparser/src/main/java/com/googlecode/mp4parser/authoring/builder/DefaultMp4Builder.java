@@ -56,6 +56,7 @@ public class DefaultMp4Builder implements Mp4Builder {
     HashMap<Track, List<Sample>> track2Sample = new HashMap<Track, List<Sample>>();
     HashMap<Track, long[]> track2SampleSizes = new HashMap<Track, long[]>();
     private Fragmenter fragmenter;
+    private boolean enableLogs;
 
     private static long sum(int[] ls) {
         long rc = 0;
@@ -83,15 +84,22 @@ public class DefaultMp4Builder implements Mp4Builder {
     public void setFragmenter(Fragmenter fragmenter) {
         this.fragmenter = fragmenter;
     }
-
+    
+    public Container build(Movie movie) {
+        return this.build(movie, false);
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public Container build(Movie movie) {
+    public Container build(Movie movie, boolean enableLogs) {
+        this.enableLogs = enableLogs;
         if (fragmenter == null) {
             fragmenter = new BetterFragmenter(2);
         }
-        LOG.logDebug("Creating movie " + movie);
+        if(DefaultMp4Builder.this.enableLogs) {
+            LOG.logDebug("Creating movie " + movie);
+        }
         for (Track track : movie.getTracks()) {
             // getting the samples may be a time consuming activity
             List<Sample> samples = track.getSamples();
@@ -122,10 +130,14 @@ public class DefaultMp4Builder implements Mp4Builder {
             contentSize += sum(stsz.getSampleSizes());
 
         }
-        LOG.logDebug("About to create mdat");
+        if(DefaultMp4Builder.this.enableLogs) {
+            LOG.logDebug("About to create mdat");
+        }
         InterleaveChunkMdat mdat = new InterleaveChunkMdat(movie, chunks, contentSize);
         isoFile.addBox(mdat);
-        LOG.logDebug("mdat crated");
+        if(DefaultMp4Builder.this.enableLogs) {
+            LOG.logDebug("mdat crated");
+        }
 
         /*
         dataOffset is where the first sample starts. In this special mdat the samples always start
@@ -323,7 +335,9 @@ public class DefaultMp4Builder implements Mp4Builder {
         Box stbl = createStbl(track, movie, chunks);
         minf.addBox(stbl);
         mdia.addBox(minf);
-        LOG.logDebug("done with trak for track_" + track.getTrackMetaData().getTrackId());
+        if(DefaultMp4Builder.this.enableLogs) {
+            LOG.logDebug("done with trak for track_" + track.getTrackMetaData().getTrackId());
+        }
         return trackBox;
     }
 
@@ -404,7 +418,9 @@ public class DefaultMp4Builder implements Mp4Builder {
             createCencBoxes((CencEncryptedTrack) track, stbl, chunks.get(track));
         }
         createSubs(track, stbl);
-        LOG.logDebug("done with stbl for track_" + track.getTrackMetaData().getTrackId());
+        if(DefaultMp4Builder.this.enableLogs) {
+            LOG.logDebug("done with stbl for track_" + track.getTrackMetaData().getTrackId());
+        }
         return stbl;
     }
 
@@ -471,8 +487,9 @@ public class DefaultMp4Builder implements Mp4Builder {
 
             long offset = 0;
             // all tracks have the same number of chunks
-            LOG.logDebug("Calculating chunk offsets for track_" + targetTrack.getTrackMetaData().getTrackId());
-
+            if(DefaultMp4Builder.this.enableLogs) {
+                LOG.logDebug("Calculating chunk offsets for track_" + targetTrack.getTrackMetaData().getTrackId());
+            }
             List<Track> tracks = new ArrayList<Track>(chunks.keySet());
             Collections.sort(tracks, new Comparator<Track>() {
                 public int compare(Track o1, Track o2) {
@@ -655,10 +672,12 @@ public class DefaultMp4Builder implements Mp4Builder {
             Map<Track, Integer> trackToChunk = new HashMap<Track, Integer>();
             Map<Track, Integer> trackToSample = new HashMap<Track, Integer>();
             Map<Track, Double> trackToTime = new HashMap<Track, Double>();
+            Map<Track, long[]> trackToDurations = new HashMap<Track, long[]>(); //added_custom
             for (Track track : tracks) {
                 trackToChunk.put(track, 0);
                 trackToSample.put(track, 0);
                 trackToTime.put(track, 0.0);
+                trackToDurations.put(track, null); //added_custom
             }
 
             while (true) {
@@ -680,8 +699,14 @@ public class DefaultMp4Builder implements Mp4Builder {
                 int numberOfSampleInNextChunk = chunks.get(nextChunksTrack)[nextChunksIndex];
                 int startSample = trackToSample.get(nextChunksTrack);
                 double time = trackToTime.get(nextChunksTrack);
+                long[] sampleDurations = trackToDurations.get(nextChunksTrack); //added_custom
+                if (sampleDurations == null) { //added_custom
+                    sampleDurations = nextChunksTrack.getSampleDurations(); //added_custom
+                    trackToDurations.put(nextChunksTrack, sampleDurations); //added_custom
+                } //added_custom
                 for (int j = startSample; j < startSample + numberOfSampleInNextChunk; j++) {
-                    time += (double) nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
+//                    time += (double) nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
+                    time += (double) sampleDurations[j] / nextChunksTrack.getTrackMetaData().getTimescale(); //added_custom
                 }
                 chunkList.add(nextChunksTrack.getSamples().subList(startSample, startSample + numberOfSampleInNextChunk));
 
@@ -755,8 +780,10 @@ public class DefaultMp4Builder implements Mp4Builder {
             writableByteChannel.write(bb);
             long writtenBytes = 0;
             long writtenMegaBytes = 0;
-
-            LOG.logDebug("About to write " + contentSize);
+    
+            if(DefaultMp4Builder.this.enableLogs) {
+                LOG.logDebug("About to write " + contentSize);
+            }
             for (List<Sample> samples : chunkList) {
                 for (Sample sample : samples) {
                     sample.writeTo(writableByteChannel);
@@ -764,7 +791,9 @@ public class DefaultMp4Builder implements Mp4Builder {
                     if (writtenBytes > 1024 * 1024) {
                         writtenBytes -= 1024 * 1024;
                         writtenMegaBytes++;
-                        LOG.logDebug("Written " + writtenMegaBytes + "MB");
+                        if(DefaultMp4Builder.this.enableLogs) {
+                            LOG.logDebug("Written " + writtenMegaBytes + "MB");
+                        }
                     }
                 }
             }
