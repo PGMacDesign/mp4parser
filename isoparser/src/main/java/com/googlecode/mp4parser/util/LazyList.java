@@ -1,6 +1,5 @@
 package com.googlecode.mp4parser.util;
 
-import com.LoggingCore;
 
 import java.util.AbstractList;
 import java.util.Iterator;
@@ -28,7 +27,8 @@ public class LazyList<E> extends AbstractList<E> {
     }
 
     private void blowup() {
-        if(LoggingCore.getShouldLog()) {
+        if(false) {
+            // TODO: 2019-04-29 Removed due to excessive Logging
             LOG.logDebug("blowup running");
         }
         while (elementSource.hasNext()) {
@@ -77,7 +77,8 @@ public class LazyList<E> extends AbstractList<E> {
 
     @Override
     public int size() {
-        if(LoggingCore.getShouldLog()) {
+        if(false) {
+            // TODO: 2019-04-29 Removed due to excessive Logging
             LOG.logDebug("potentially expensive size() call");
         }
         blowup();

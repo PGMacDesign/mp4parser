@@ -16,7 +16,6 @@
 
 package com.googlecode.mp4parser;
 
-import com.LoggingCore;
 import com.coremedia.iso.BoxParser;
 import com.coremedia.iso.Hex;
 import com.coremedia.iso.IsoFile;
@@ -146,7 +145,8 @@ public abstract class AbstractBox implements Box {
      * which is done
      */
     public synchronized final void parseDetails() {
-        if(LoggingCore.getShouldLog()) {
+        if(false) {
+            // TODO: 2019-04-29 Removed due to excessive Logging
             LOG.logDebug("parsing details of " + this.getType());
         }
         if (content != null) {
