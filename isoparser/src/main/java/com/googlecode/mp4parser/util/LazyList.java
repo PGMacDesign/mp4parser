@@ -29,7 +29,7 @@ public class LazyList<E> extends AbstractList<E> {
     private void blowup() {
         if(false) {
             // TODO: 2019-04-29 Removed due to excessive Logging
-            LOG.logDebug("blowup running");
+//            LOG.logDebug("blowup running");
         }
         while (elementSource.hasNext()) {
             underlying.add(elementSource.next());
@@ -79,7 +79,7 @@ public class LazyList<E> extends AbstractList<E> {
     public int size() {
         if(false) {
             // TODO: 2019-04-29 Removed due to excessive Logging
-            LOG.logDebug("potentially expensive size() call");
+//            LOG.logDebug("potentially expensive size() call");
         }
         blowup();
         return underlying.size();

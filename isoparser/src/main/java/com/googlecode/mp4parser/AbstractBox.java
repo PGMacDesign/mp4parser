@@ -147,7 +147,7 @@ public abstract class AbstractBox implements Box {
     public synchronized final void parseDetails() {
         if(false) {
             // TODO: 2019-04-29 Removed due to excessive Logging
-            LOG.logDebug("parsing details of " + this.getType());
+//            LOG.logDebug("parsing details of " + this.getType());
         }
         if (content != null) {
             ByteBuffer content = this.content;

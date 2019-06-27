@@ -112,7 +112,6 @@ public class CAVLCReader extends BitstreamReader {
     }
 
     public boolean readAE() {
-        // TODO: do it!!
         throw new UnsupportedOperationException("Stan");
     }
 
@@ -123,7 +122,6 @@ public class CAVLCReader extends BitstreamReader {
     }
 
     public int readAEI() {
-        // TODO: do it!!
         throw new UnsupportedOperationException("Stan");
     }
 
