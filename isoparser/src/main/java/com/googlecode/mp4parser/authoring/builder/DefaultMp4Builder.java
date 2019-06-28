@@ -799,8 +799,11 @@ public class DefaultMp4Builder implements Mp4Builder {
             if(DefaultMp4Builder.this.shouldLog){
                 LOG.logDebug("About to write " + contentSize);
             }
-            LOG.logDebug("getBox hit (Before for loop)");
+            int numberOfSamples = chunkList.size();
+            LOG.logDebug("Testing, Number of samples at top level == " + numberOfSamples);
             for (List<Sample> samples : chunkList) {
+                int numberOfSamples2 = samples.size();
+                LOG.logDebug("Testing, Number of samples at 2nd level (1 nested) == " + numberOfSamples2);
                 for (Sample sample : samples) {
                     sample.writeTo(writableByteChannel);
                     writtenBytes += sample.getSize();
@@ -811,14 +814,14 @@ public class DefaultMp4Builder implements Mp4Builder {
                         if(DefaultMp4Builder.this.shouldLog){
                             LOG.logDebug("Written " + writtenMegaBytes + "MB");
                         }
+                        LOG.logDebug("Written " + writtenMegaBytes + "MB");
                         if(DefaultMp4Builder.this.chunkWriterCallback != null){
-                            float percentWritten = (contentSize <= 16) ? 0F : ((float)totalWrittenBytes / (float)contentSize);
+                            float percentWritten = (contentSize <= 16) ? 0F : (((float)totalWrittenBytes / (float)contentSize) / numberOfSamples2);
                             chunkWriterCallback.chunkWritten(totalWrittenBytes, contentSize, percentWritten);
                         }
                     }
                 }
             }
-            LOG.logDebug("getBox hit (AFTER for loop)");
         }
 
     }
