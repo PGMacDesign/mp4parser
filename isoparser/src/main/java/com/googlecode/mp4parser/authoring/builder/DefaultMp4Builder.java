@@ -774,8 +774,10 @@ public class DefaultMp4Builder implements Mp4Builder {
             return (contentSize + 8) < 4294967296L;
         }
 
-
+        private long totalWrittenBytes;
+        
         public void getBox(WritableByteChannel writableByteChannel) throws IOException {
+            this.totalWrittenBytes = 0;
             ByteBuffer bb = ByteBuffer.allocate(16);
             long size = getSize();
             if (isSmallBox(size)) {
@@ -802,6 +804,7 @@ public class DefaultMp4Builder implements Mp4Builder {
                 for (Sample sample : samples) {
                     sample.writeTo(writableByteChannel);
                     writtenBytes += sample.getSize();
+                    totalWrittenBytes += writtenBytes;
                     if (writtenBytes > 1024 * 1024) {
                         writtenBytes -= 1024 * 1024;
                         writtenMegaBytes++;
@@ -809,8 +812,8 @@ public class DefaultMp4Builder implements Mp4Builder {
                             LOG.logDebug("Written " + writtenMegaBytes + "MB");
                         }
                         if(DefaultMp4Builder.this.chunkWriterCallback != null){
-                            float percentWritten = (contentSize <= 16) ? 0F : ((float)writtenBytes / (float)contentSize);
-                            chunkWriterCallback.chunkWritten(writtenBytes, contentSize, percentWritten);
+                            float percentWritten = (contentSize <= 16) ? 0F : ((float)totalWrittenBytes / (float)contentSize);
+                            chunkWriterCallback.chunkWritten(totalWrittenBytes, contentSize, percentWritten);
                         }
                     }
                 }
