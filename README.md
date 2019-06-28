@@ -25,10 +25,10 @@ allprojects {
 
 Include this in your module-level gradle file:
 ```
-    implementation 'com.github.PGMacDesign.mp4parser:isoparser:1.2.1'
+    implementation 'com.github.PGMacDesign.mp4parser:isoparser:1.2.2'
 ```
 
-For other build instructions (IE Maven), See [this Jetpack link](https://jitpack.io/#PGMacDesign/mp4parser/1.2.1)
+For other build instructions (IE Maven), See [this Jetpack link](https://jitpack.io/#PGMacDesign/mp4parser/1.2.2)
 
 
 Updated by PGMacDesign
